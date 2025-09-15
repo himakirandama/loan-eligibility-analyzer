@@ -45,6 +45,11 @@ def parse_pdf(file):
     except:
         data["no_of_dependents"] = 0
 
+    try:
+        data["loan_amount"] = re.search(r"loan\s+amount.*?:\s*(\d+)", text, re.IGNORECASE).group(1)
+    except:
+        data["loan_amount"] = 0
+
     # Residential Assets Value
     try:
         data["residential_assets_value"] = re.search(r"Residential\s+Assets\s+Value\s*:\s*(\d+)", text, re.IGNORECASE).group(1)
@@ -91,18 +96,25 @@ def predict_loan(data):
     # Convert numeric columns
     numeric_cols = [
         "cibil_score", "loan_term", "income_annum",
-        "no_of_dependents", "residential_assets_value", "commercial_assets_value","loan_amount"  
+        "no_of_dependents", "residential_assets_value",
+        "commercial_assets_value", "loan_amount"
     ]
     numeric_cols = [col for col in numeric_cols if col in df.columns]
-
-    if numeric_cols:  # Apply conversion only if there are valid numeric columns
+    if numeric_cols:
         df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors="coerce").fillna(0)
-    expected_order = ['cibil_score', 'loan_term', 'self_employed_no', 'income_annum', 'no_of_dependents', 'residential_assets_value', 'commercial_assets_value', 'education_graduate']
-    df = df[expected_order]
+
+    # ✅ Match model’s expected order
+    expected_order = [
+        'cibil_score', 'loan_term', 'no_of_dependents',
+        'commercial_assets_value', 'income_annum', 'loan_amount',
+        'residential_assets_value', 'education_graduate', 'self_employed_no'
+    ]
+    df = df.reindex(columns=expected_order, fill_value=0)
 
     # Make prediction
     prediction = model.predict(df)[0]
     return "✅ Loan Approved" if prediction == 1 else "❌ Loan Rejected"
+
 
 
 st.set_page_config(page_title="Loan Approval Chatbot", page_icon="🤖")
