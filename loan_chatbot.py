@@ -87,6 +87,28 @@ def parse_pdf(file):
 
 # ---------------- Loan Prediction ---------------- #
 def predict_loan(data):
+
+    if data["cibil_score"] is None:
+        data["cibil_score"] = st.number_input("Enter your CIBIL Score:", min_value=300, max_value=900, value=750)
+    if data["loan_term"] is None:
+        data["loan_term"] = st.number_input("Enter Loan Term (months):", min_value=1, value=60)
+    if data["income_annum"] is None:
+        data["income_annum"] = st.number_input("Enter Annual Income:", min_value=0, value=500000)
+    if data["no_of_dependents"] is None:
+        data["no_of_dependents"] = st.number_input("Enter Number of Dependents:", min_value=0, value=0)
+    if data["loan_amount"] is None:
+        data["loan_amount"] = st.number_input("Enter loan amount:", min_value=0, value=0)
+    if data["residential_assets_value"] is None:
+        data["residential_assets_value"] = st.number_input("Enter Residential Assets Value:", min_value=0, value=0)
+    if data["commercial_assets_value"] is None:
+        data["commercial_assets_value"] = st.number_input("Enter Commercial Assets Value:", min_value=0, value=0)
+    if data["education_graduate"] is None:
+        edu_option = st.selectbox("Education Status:", ["Yes (Graduate)", "No (Not Graduate)"])
+        data["education_graduate"] = "Yes" if "Yes" in edu_option else "No"
+    if data["self_employed_no"] is None:
+        emp_option = st.selectbox("Self Employed:", ["Yes", "No"])
+        data["self_employed_no"] = emp_option
+    
     df = pd.DataFrame([data])
 
     # Convert Yes/No fields to numeric
@@ -113,13 +135,14 @@ def predict_loan(data):
 
     # Make prediction
     prediction = model.predict(df)[0]
-    return "✅ Loan Approved" if prediction == 1 else "❌ Loan Rejected"
+    return "✅ Loan Eligible" if prediction == 1 else "❌ Loan Not Eligible"
 
 
 
-st.set_page_config(page_title="Loan Approval Chatbot", page_icon="🤖")
-st.title("🤖 Loan Approval Chatbot")
-st.write("Upload your **loan application PDF**, and I’ll tell you whether your loan is approved or rejected.")
+st.set_page_config(page_title="Loan-Eligibility-Analyzer
+/", page_icon="🤖")
+st.title("🤖 Loan Eligibility Analyzer/")
+st.write("Upload your **loan application PDF**, and I’ll tell you whether your are eligible for the loan or not.")
 
 uploaded_file = st.file_uploader("📂 Upload Loan Application PDF", type=["pdf"])
 
