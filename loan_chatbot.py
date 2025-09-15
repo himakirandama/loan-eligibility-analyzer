@@ -91,7 +91,7 @@ def predict_loan(data):
     # Convert numeric columns
     numeric_cols = [
         "cibil_score", "loan_term", "income_annum",
-        "no_of_dependents", "residential_assets_value", "commercial_assets_value"
+        "no_of_dependents", "residential_assets_value", "commercial_assets_value","loan_amount"  
     ]
     df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors="coerce").fillna(0)
     expected_order = ['cibil_score', 'loan_term', 'self_employed_no', 'income_annum', 'no_of_dependents', 'residential_assets_value', 'commercial_assets_value', 'education_graduate']
