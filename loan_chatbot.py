@@ -139,8 +139,7 @@ def predict_loan(data):
 
 
 
-st.set_page_config(page_title="Loan-Eligibility-Analyzer
-/", page_icon="🤖")
+st.set_page_config(page_title="Loan-Eligibility-Analyzer/", page_icon="🤖")
 st.title("🤖 Loan Eligibility Analyzer/")
 st.write("Upload your **loan application PDF**, and I’ll tell you whether your are eligible for the loan or not.")
 
