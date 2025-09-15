@@ -8,10 +8,8 @@ from PyPDF2 import PdfReader
 model = joblib.load("loan_approval_model.pkl")
 
 # ---------------- PDF Parsing ---------------- #
+# ---------------- PDF Parsing ---------------- #
 def parse_pdf(file):
-    """
-    Extract required fields from uploaded PDF (BytesIO object)
-    """
     reader = PdfReader(file)
     text = ""
     for page in reader.pages:
@@ -25,44 +23,45 @@ def parse_pdf(file):
     try:
         data["cibil_score"] = re.search(r"CIBIL Score.*?:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["cibil_score"] = 0
+        data["cibil_score"] = None
 
     # Loan Term
     try:
         data["loan_term"] = re.search(r"Loan term.*?:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["loan_term"] = 0
+        data["loan_term"] = None
 
     # Income
     try:
         data["income_annum"] = re.search(r"Income.*?:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["income_annum"] = 0
+        data["income_annum"] = None
 
     # Number of Dependents
     try:
         data["no_of_dependents"] = re.search(r"Dependents.*?:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["no_of_dependents"] = 0
+        data["no_of_dependents"] = None
 
+    # Loan Amount
     try:
         data["loan_amount"] = re.search(r"loan\s+amount.*?:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["loan_amount"] = 0
+        data["loan_amount"] = None
 
     # Residential Assets Value
     try:
         data["residential_assets_value"] = re.search(r"Residential\s+Assets\s+Value\s*:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["residential_assets_value"] = 0
+        data["residential_assets_value"] = None
 
     # Commercial Assets Value
     try:
         data["commercial_assets_value"] = re.search(r"Commercial\s+Assets\s+Value\s*:\s*(\d+)", text, re.IGNORECASE).group(1)
     except:
-        data["commercial_assets_value"] = 0
+        data["commercial_assets_value"] = None
 
-    # Education: Graduate/Graduated = Yes, Not Graduate/Not Graduated = No
+    # Education
     try:
         edu_match = re.search(r"Education\s*:\s*(Graduate|Graduated|Not\s*Graduate|Not\s*Graduated)", text, re.IGNORECASE)
         if edu_match:
@@ -72,18 +71,19 @@ def parse_pdf(file):
             else:
                 data["education_graduate"] = "No"
         else:
-            data["education_graduate"] = "No"
+            data["education_graduate"] = None
     except:
-        data["education_graduate"] = "No"
+        data["education_graduate"] = None
 
     # Self Employed
     try:
         emp_match = re.search(r"Self\s*Employed\s*:\s*(Yes|No)", text, re.IGNORECASE)
         data["self_employed_no"] = emp_match.group(1)
     except:
-        data["self_employed_no"] = "No"
+        data["self_employed_no"] = None
 
     return data
+
 
 # ---------------- Loan Prediction ---------------- #
 def predict_loan(data):
