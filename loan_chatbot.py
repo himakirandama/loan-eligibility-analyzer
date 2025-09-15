@@ -140,7 +140,7 @@ def predict_loan(data):
 
 
 st.set_page_config(page_title="Loan-Eligibility-Analyzer/", page_icon="🤖")
-st.title("🤖 Loan Eligibility Analyzer/")
+st.title("🤖 Loan Eligibility Analyzer")
 st.write("Upload your **loan application PDF**, and I’ll tell you whether your are eligible for the loan or not.")
 
 uploaded_file = st.file_uploader("📂 Upload Loan Application PDF", type=["pdf"])
@@ -149,6 +149,11 @@ if uploaded_file is not None:
     with st.spinner("Extracting details from PDF..."):
         data = parse_pdf(uploaded_file)
         st.write("### Extracted Information")
+        st.markdown(
+    "<span style='color:red; font-weight:bold;'>Note: PDF should contain the following info:</span>",
+    unsafe_allow_html=True
+)
+        st.write(" name , age , cibil score, loan term, self employed(Yes or No), annual income, number of dependents,loan amount, Residential Assets Value,Commercial Assets Value,Education(graduate or not graduate")
         st.json(data)
 
         result = predict_loan(data)
